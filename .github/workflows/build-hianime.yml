@@ -11,9 +11,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: build-hianime-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       CI: "true"
     steps:
