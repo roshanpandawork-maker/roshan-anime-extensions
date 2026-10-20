@@ -1,0 +1,51 @@
+name: Build HiAnime extension
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/en/hianime/**"
+      - ".github/workflows/build-hianime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this project
+        uses: actions/checkout@v4
+
+      - name: Check out archived Aniyomi extension build environment
+        uses: actions/checkout@v4
+        with:
+          repository: aniyomiorg/aniyomi-extensions
+          ref: master
+          path: aniyomi-build
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: aniyomi-build/**/gradle-wrapper.properties
+
+      - name: Copy HiAnime module into build environment
+        run: |
+          mkdir -p aniyomi-build/src/en/hianime
+          cp -R src/en/hianime/. aniyomi-build/src/en/hianime/
+
+      - name: Build debug APK
+        working-directory: aniyomi-build
+        run: ./gradlew --no-daemon :src:en:hianime:assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hianime-debug-apk
+          path: aniyomi-build/src/en/hianime/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
