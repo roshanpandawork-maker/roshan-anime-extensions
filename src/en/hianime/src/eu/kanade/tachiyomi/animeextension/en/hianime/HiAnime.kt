@@ -1,12 +1,12 @@
 package eu.kanade.tachiyomi.animeextension.en.hianime
 
-import eu.kanade.tachiyomi.animesource.AnimeFilter
-import eu.kanade.tachiyomi.animesource.AnimeFilterList
-import eu.kanade.tachiyomi.animesource.AnimesPage
+import eu.kanade.tachiyomi.animesource.model.AnimeFilterList
+import eu.kanade.tachiyomi.animesource.model.AnimesPage
 import eu.kanade.tachiyomi.animesource.model.SAnime
 import eu.kanade.tachiyomi.animesource.model.SEpisode
 import eu.kanade.tachiyomi.animesource.model.Video
 import eu.kanade.tachiyomi.animesource.online.AnimeHttpSource
+import eu.kanade.tachiyomi.network.GET
 import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.Jsoup
@@ -37,7 +37,7 @@ class HiAnime : AnimeHttpSource() {
         return AnimesPage(entries, hasNext)
     }
 
-    override fun searchAnimeRequest(page: Int, query: String, filters: List<AnimeFilter>): Request {
+    override fun searchAnimeRequest(page: Int, query: String, filters: AnimeFilterList): Request {
         val encoded = URLEncoder.encode(query, "UTF-8")
         return GET("$baseUrl/search?keyword=$encoded&page=$page", HEADERS)
     }
