@@ -47,7 +47,7 @@ jobs:
           from pathlib import Path
           path = Path("settings.gradle.kts")
           text = path.read_text()
-          old = "\\n".join([
+          old = "\n".join([
               '    val chunkSize = System.getenv("CI_CHUNK_SIZE").toInt()',
               '    val chunk = System.getenv("CI_CHUNK_NUM").toInt()',
               '',
@@ -56,7 +56,7 @@ jobs:
               '        loadIndividualExtension(it.parentFile.name, it.name)',
               '    }',
           ])
-          new = "\\n".join([
+          new = "\n".join([
               '    // Load only the extension under test; do not configure every source module.',
               '    loadIndividualExtension("en", "hianime")',
           ])
