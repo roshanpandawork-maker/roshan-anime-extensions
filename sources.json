@@ -12,7 +12,7 @@
       "priority": "high",
       "integration": "prototype-module",
       "tested": false,
-      "notes": "Initial Kotlin module added for listing/search/details/episodes. Not yet build-verified or tested in Aniyomi; playback extractor is not implemented."
+      "notes": "Debug APK build passed in GitHub Actions on 2026-10-20. Not tested in a live Aniyomi installation; playback extraction is not implemented and the original service/domain is unverified."
     },
     {
       "id": "animedubhindi",
