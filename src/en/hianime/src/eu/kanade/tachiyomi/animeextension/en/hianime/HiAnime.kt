@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.animeextension.en.hianime
 
 import eu.kanade.tachiyomi.animesource.AnimeFilter
+import eu.kanade.tachiyomi.animesource.AnimeFilterList
 import eu.kanade.tachiyomi.animesource.AnimesPage
 import eu.kanade.tachiyomi.animesource.model.SAnime
 import eu.kanade.tachiyomi.animesource.model.SEpisode
@@ -16,9 +17,9 @@ import java.net.URLEncoder
 /**
  * Initial HiAnime integration.
  *
- * Site markup and video-provider behaviour change frequently. Search, details and episode
- * parsing are implemented defensively; stream extraction is intentionally reported as an
- * explicit unsupported state rather than pretending an embed page is a playable video URL.
+ * Search, details and episode parsing use the site's current public page patterns. HiAnime
+ * frequently changes markup and protects third-party video embeds. Playback must be tested
+ * against a maintained extractor before this source can be called production-ready.
  */
 class HiAnime : AnimeHttpSource() {
     override val name = "HiAnime"
@@ -62,7 +63,7 @@ class HiAnime : AnimeHttpSource() {
         anime.thumbnail_url = document.selectFirst(".film-poster img, .film-poster .film-poster-img")
             ?.let { it.absUrl("src").ifBlank { it.absUrl("data-src") } }
         anime.description = document.selectFirst(".film-description, .film-des")?.text()
-        anime.genre = document.select(".item-list a[href*=/genre/]").joinToString(", ") { it.text() }
+        anime.genre = document.select(".item-list a[href*=/genre/]").joinToString { it.text() }
         anime.status = when {
             document.text().contains("Currently Airing", true) -> SAnime.ONGOING
             document.text().contains("Finished Airing", true) -> SAnime.COMPLETED
@@ -83,17 +84,15 @@ class HiAnime : AnimeHttpSource() {
         }
 
         val ajaxUrl = "$baseUrl/ajax/v2/episode/list/$animeId"
-        val ajaxResponse = client.newCall(GET(ajaxUrl, headers)).execute()
-        val payload = ajaxResponse.use { it.body.string() }
+        val payload = client.newCall(GET(ajaxUrl, headers)).execute().use { it.body.string() }
         val html = runCatching { org.json.JSONObject(payload).optString("html") }.getOrDefault("")
         if (html.isBlank()) return emptyList()
 
-        return Jsoup.parse(html).select(".ep-item").map { element ->
+        return Jsoup.parseBodyFragment(html, baseUrl).select(".ep-item").map { element ->
             SEpisode.create().apply {
                 url = element.attr("href").ifBlank { element.attr("data-id") }
-                name = element.attr("title").ifBlank { element.text().trim() }
-                episode_number = Regex("""(?:Episode\s*)?(\d+(?:\.\d+)?)""", RegexOption.IGNORE_CASE)
-                    .find(name)?.groupValues?.getOrNull(1)?.toFloatOrNull() ?: 0f
+                name = element.attr("title").ifBlank { element.text() }
+                episode_number = EPISODE_NUMBER.find(name)?.groupValues?.getOrNull(1)?.toFloatOrNull() ?: 0f
             }
         }.reversed()
     }
@@ -102,25 +101,21 @@ class HiAnime : AnimeHttpSource() {
         GET(if (episode.url.startsWith("http")) episode.url else baseUrl + episode.url, headers)
 
     override fun videoListParse(response: Response): List<Video> {
-        // HiAnime commonly uses protected third-party embed providers. An iframe URL is not
-        // itself a playable media URL. Until a maintained extractor is integrated and tested,
-        // fail clearly instead of returning a misleading non-playable video entry.
+        // An iframe URL is not itself a playable media URL. Do not return it as a video.
         val document = response.asJsoup()
         val iframe = document.selectFirst("#player iframe, iframe[src*=/embed/]")
         val embed = iframe?.absUrl("src").orEmpty()
         if (embed.isNotBlank()) {
             throw UnsupportedOperationException(
-                "HiAnime embed found but provider extraction is not implemented yet: $embed",
+                "HiAnime embed found, but provider stream extraction is not integrated yet.",
             )
         }
         throw UnsupportedOperationException("HiAnime player embed was not found; the site may have changed.")
     }
 
-    override fun videoFromElement(element: Element): Video? = null
-
     private fun Element.toAnime(): SAnime? {
         val link = selectFirst(".film-name a, a[href*=/watch/], a[href*=/anime/]") ?: return null
-        val title = link.attr("title").ifBlank { link.text().trim() }
+        val title = link.attr("title").ifBlank { link.text() }
         val href = link.attr("href")
         if (title.isBlank() || href.isBlank()) return null
         return SAnime.create().apply {
@@ -135,6 +130,7 @@ class HiAnime : AnimeHttpSource() {
     private fun Response.asJsoup(): Document = Jsoup.parse(body.string(), request.url.toString())
 
     companion object {
+        private val EPISODE_NUMBER = Regex("""(?:Episode\s*)?(\d+(?:\.\d+)?)""", RegexOption.IGNORE_CASE)
         private val headers = okhttp3.Headers.Builder()
             .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36")
             .add("Referer", "https://hianime.to/")
