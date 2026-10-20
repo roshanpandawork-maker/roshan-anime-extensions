@@ -16,8 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: "true"
-      CI_CHUNK_SIZE: "1000"
-      CI_CHUNK_NUM: "0"
     steps:
       - name: Check out this project
         uses: actions/checkout@v4
@@ -41,6 +39,27 @@ jobs:
         run: |
           mkdir -p aniyomi-build/src/en/hianime
           cp -R src/en/hianime/. aniyomi-build/src/en/hianime/
+
+      - name: Configure isolated module build
+        working-directory: aniyomi-build
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("settings.gradle.kts")
+          text = path.read_text()
+          old = '''    val chunkSize = System.getenv("CI_CHUNK_SIZE").toInt()
+    val chunk = System.getenv("CI_CHUNK_NUM").toInt()
+
+    // Loads individual extensions
+    File(rootDir, "src").getChunk(chunk, chunkSize)?.forEach {
+        loadIndividualExtension(it.parentFile.name, it.name)
+    }'''
+          new = '''    // Load only the extension under test; do not configure every source module.
+    loadIndividualExtension("en", "hianime")'''
+          if old not in text:
+              raise SystemExit("Could not locate expected CI module-loading block in settings.gradle.kts")
+          path.write_text(text.replace(old, new, 1))
+          PY
 
       - name: Build debug APK
         working-directory: aniyomi-build
