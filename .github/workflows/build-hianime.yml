@@ -44,16 +44,13 @@ jobs:
         working-directory: aniyomi-build
         run: |
           python3 - <<'PY'
-          import re
           from pathlib import Path
           path = Path("settings.gradle.kts")
           text = path.read_text()
-          pattern = r'    val chunkSize = System\\.getenv\\("CI_CHUNK_SIZE"\\)\\.toInt\\(\\).*?    \\}'
-          new = '    // Load only the extension under test; do not configure every source module.\\n    loadIndividualExtension("en", "hianime")'
-          updated, count = re.subn(pattern, lambda _: new, text, count=1, flags=re.S)
-          if count != 1:
-              raise SystemExit("Could not locate expected CI module-loading block in settings.gradle.kts")
-          path.write_text(updated)
+          start = text.index('    val chunkSize = System.getenv("CI_CHUNK_SIZE").toInt()')
+          end = text.index('    }', start) + len('    }')
+          replacement = '    // Load only the extension under test; do not configure every source module.\\n    loadIndividualExtension("en", "hianime")'
+          path.write_text(text[:start] + replacement + text[end:])
           PY
 
       - name: Build debug APK
