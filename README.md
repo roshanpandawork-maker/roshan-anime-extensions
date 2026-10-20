@@ -1,47 +1,52 @@
 # Roshan Anime Extensions
 
-A standalone project for tracking and developing Aniyomi-compatible anime sources, prioritising Hindi-dubbed and English-subbed/dubbed anime.
+A standalone Aniyomi-compatible anime extension project prioritising Hindi-dubbed and English-subbed/dubbed anime.
 
-> **Status:** Initial setup. This repository is not yet an installable Aniyomi extension repository: it does not currently publish signed APKs or an `index.min.json`. I will not label a source as working until it has been built and tested.
+> **Status: prototype, not production-ready.** A first HiAnime module and a GitHub Actions build workflow have been added. The module has not yet been built or tested in a live Aniyomi installation, and playback extraction is not implemented. This repository does not yet publish a usable repository index or verified release APK.
 
-## Current priorities
+## Current implementation
 
-1. HiAnime — English subtitles/dubs where available.
-2. Hindi-focused sources — Hindi-dubbed anime.
-3. Other maintained sources — English sub/dub as available.
+- **HiAnime (English):** initial Kotlin module for popular listings, search, details, and episode-list parsing.
+- **Playback:** not implemented. HiAnime pages commonly use third-party protected embeds; the module deliberately reports this limitation rather than passing an iframe URL off as a playable video.
+- **Hindi sources:** under evaluation. They are not claimed as implemented or tested here.
 
-## Sources you can use now
+The Build HiAnime extension workflow attempts to build the module against the archived Aniyomi extension build environment and uploads a debug APK artifact if compilation succeeds. A successful build alone does not prove the site parser or playback works.
 
-These are independent community repositories, not bundled into this project. Add them separately in Aniyomi under **Settings → Browse → Extension repos**:
+## Sources you can use separately now
 
-- **Yūzōnō anime extensions**  
-  Repository index: https://raw.githubusercontent.com/yuzono/anime-repo/repo/index.min.json  
+These community repositories are independent of this project. Add them separately in Aniyomi under **Settings → Browse → Extension repos**:
+
+- **Yūzōnō anime extensions**
+  Repository index: https://raw.githubusercontent.com/yuzuno/anime-repo/repo/index.min.json
   Source code: https://github.com/yuzono/anime-extensions
 
-- **MSR anime extensions** (their published catalogue lists Toonstream, AnimeDubHindi and MovieBox)  
-  Repository index: https://raw.githubusercontent.com/msrofficial/anime-repo/repo/index.min.json  
+- **MSR anime extensions** (their published catalogue lists Toonstream, AnimeDubHindi and MovieBox)
+  Repository index: https://raw.githubusercontent.com/msrofficial/anime-repo/repo/index.min.json
   Source code: https://github.com/msrofficial/anime-extensions
 
-Availability can change when streaming sites change domains, block requests, or alter their pages. Do not assume every source is currently functional.
+Availability changes when streaming sites change domains, block requests, or alter their pages. These links are independent third-party repositories, not APKs built by Roshan Anime Extensions.
 
 ## Project rules
 
 - This repository stays separate from other personal projects.
-- Work is committed to `main`; no unrelated repositories or files are modified.
+- Work is committed to main; no unrelated repositories or files are modified.
 - Source code and APKs must be traceable to their source and license.
-- Do not publish unsigned, unverifiable, or falsely labelled APKs.
+- Never commit signing keystores or signing passwords.
 - Test search, details, episode listing, and playback before marking a source as working.
+- Do not publish a repository index or advertise a production-ready release until a reproducible build and real playback tests pass.
 
-## Planned work
+## Next milestones
 
-- [ ] Establish the extension build template and CI.
-- [ ] Implement and test a HiAnime source.
-- [ ] Evaluate maintained Hindi sources and implement only those that can be tested.
-- [ ] Generate the repository index and signed APKs before publishing an install URL.
+- [x] Add the initial HiAnime module and a build workflow.
+- [ ] Confirm the GitHub Actions build succeeds; fix compiler/build errors.
+- [ ] Test search, details, and episode listing against the current site.
+- [ ] Integrate and test a maintained video extractor.
+- [ ] Evaluate Hindi sources and implement only sources that can be tested.
+- [ ] Set up signed releases and generate a repository index only after the above passes.
 
 ## Legal and safety note
 
-This project provides source-integration software, not anime video files. Users are responsible for following applicable law and the terms of the sites they access. Extensions can stop working without notice.
+This project provides source-integration software, not anime video files. Users are responsible for following applicable law and the terms of the sites they access. Community extensions can stop working without notice.
 
 ## References
 
