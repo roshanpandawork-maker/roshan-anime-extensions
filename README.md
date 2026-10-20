@@ -2,7 +2,7 @@
 
 A standalone Aniyomi-compatible anime extension project prioritising Hindi-dubbed and English-subbed/dubbed anime.
 
-> **Status: prototype, not production-ready.** A first HiAnime module and a GitHub Actions build workflow have been added. The module has not yet been built or tested in a live Aniyomi installation, and playback extraction is not implemented. This repository does not yet publish a usable repository index or verified release APK.
+> **Status: prototype, not production-ready.** A first HiAnime module and a GitHub Actions build workflow have been added. The module has not yet been built or tested in a live Aniyomi installation, and playback extraction is not implemented. This repository does not yet publish a usable repository index or verified release APK. The original HiAnime service's status is disputed; treat `hianime.to` and lookalike domains as unverified until independently confirmed.
 
 ## Current implementation
 
@@ -24,7 +24,7 @@ These community repositories are independent of this project. Add them separatel
   Repository index: https://raw.githubusercontent.com/msrofficial/anime-repo/repo/index.min.json
   Source code: https://github.com/msrofficial/anime-extensions
 
-Availability changes when streaming sites change domains, block requests, or alter their pages. These links are independent third-party repositories, not APKs built by Roshan Anime Extensions.
+Availability changes when streaming sites change domains, block requests, or alter their pages. The original HiAnime community announced a shutdown in 2026, while third-party sites make conflicting claims about replacement domains; do not trust random lookalike domains or enter credentials on them. These links are independent third-party repositories, not APKs built by Roshan Anime Extensions.
 
 ## Project rules
 
