@@ -87,8 +87,11 @@ class HiAnime : AnimeHttpSource() {
 
     override fun episodeListParse(response: Response): List<SEpisode> {
         val document = response.asJsoup()
-        val animeId = document.selectFirst("[data-id]")?.attr("data-id")
-            ?: document.selectFirst("div.film-poster")?.attr("data-id")
+        val syncData = document.selectFirst("script#syncData")?.data().orEmpty()
+        val animeId = runCatching { org.json.JSONObject(syncData).optString("anime_id") }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: document.selectFirst(".film-poster[data-id], .anisc-detail [data-id]")?.attr("data-id")
         if (animeId.isNullOrBlank()) {
             throw UnsupportedOperationException("HiAnime episode ID was not found; the site markup may have changed.")
         }
@@ -98,10 +101,11 @@ class HiAnime : AnimeHttpSource() {
         val html = runCatching { org.json.JSONObject(payload).optString("html") }.getOrDefault("")
         if (html.isBlank()) return emptyList()
 
-        return Jsoup.parseBodyFragment(html, baseUrl).select(".ep-item").map { element ->
+        return Jsoup.parseBodyFragment(html, baseUrl).select("a.ssl-item, .ep-item").map { element ->
             SEpisode.create().apply {
                 url = element.attr("href").ifBlank { element.attr("data-id") }
-                name = element.attr("title").ifBlank { element.text() }
+                name = element.selectFirst(".ep-name")?.text().orEmpty()
+                    .ifBlank { element.attr("title").ifBlank { element.text() } }
                 episode_number = EPISODE_NUMBER.find(name)?.groupValues?.getOrNull(1)?.toFloatOrNull() ?: 0f
             }
         }.reversed()
