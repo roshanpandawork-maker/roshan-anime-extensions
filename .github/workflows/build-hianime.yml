@@ -44,9 +44,6 @@ jobs:
         working-directory: aniyomi-build
         run: |
           python3 - <<'PY'
-          from pathlib import Path
-          path = Path("settings.gradle.kts")
-          text = path.read_text()
           import re
           from pathlib import Path
           path = Path("settings.gradle.kts")
@@ -57,7 +54,6 @@ jobs:
           if count != 1:
               raise SystemExit("Could not locate expected CI module-loading block in settings.gradle.kts")
           path.write_text(updated)
-          path.write_text(text.replace(old, new, 1))
           PY
 
       - name: Build debug APK
