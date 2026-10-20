@@ -47,21 +47,16 @@ jobs:
           from pathlib import Path
           path = Path("settings.gradle.kts")
           text = path.read_text()
-          old = "\n".join([
-              '    val chunkSize = System.getenv("CI_CHUNK_SIZE").toInt()',
-              '    val chunk = System.getenv("CI_CHUNK_NUM").toInt()',
-              '',
-              '    // Loads individual extensions',
-              '    File(rootDir, "src").getChunk(chunk, chunkSize)?.forEach {',
-              '        loadIndividualExtension(it.parentFile.name, it.name)',
-              '    }',
-          ])
-          new = "\n".join([
-              '    // Load only the extension under test; do not configure every source module.',
-              '    loadIndividualExtension("en", "hianime")',
-          ])
-          if old not in text:
+          import re
+          from pathlib import Path
+          path = Path("settings.gradle.kts")
+          text = path.read_text()
+          pattern = r'    val chunkSize = System\\.getenv\\("CI_CHUNK_SIZE"\\)\\.toInt\\(\\).*?    \\}'
+          new = '    // Load only the extension under test; do not configure every source module.\\n    loadIndividualExtension("en", "hianime")'
+          updated, count = re.subn(pattern, lambda _: new, text, count=1, flags=re.S)
+          if count != 1:
               raise SystemExit("Could not locate expected CI module-loading block in settings.gradle.kts")
+          path.write_text(updated)
           path.write_text(text.replace(old, new, 1))
           PY
 
