@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "project": "Roshan Anime Extensions",
+  "status": "research",
+  "sources": [
+    {
+      "id": "hianime",
+      "name": "HiAnime",
+      "languages": ["en"],
+      "priority": "high",
+      "integration": "planned",
+      "tested": false,
+      "notes": "Implement only after confirming the current site domain, search/detail/episode parsing, and stream extraction. Cloudflare or site changes may block automation."
+    },
+    {
+      "id": "animedubhindi",
+      "name": "AnimeDubHindi",
+      "languages": ["hi"],
+      "priority": "high",
+      "integration": "evaluate-upstream",
+      "tested": false,
+      "notes": "A maintained community repository currently lists a Hindi source. Prefer reviewing its implementation and license before adapting code."
+    },
+    {
+      "id": "toonstream",
+      "name": "Toonstream",
+      "languages": ["hi"],
+      "priority": "high",
+      "integration": "evaluate-upstream",
+      "tested": false,
+      "notes": "A maintained community repository currently lists a Hindi source. Availability can change; this project has not tested it."
+    },
+    {
+      "id": "yuzono-catalogue",
+      "name": "Yūzōnō Anime Extensions",
+      "languages": ["multi"],
+      "priority": "reference",
+      "integration": "external-repository",
+      "tested": false,
+      "notes": "Use as a reference catalogue; do not copy APKs into this project or imply that they are built by this repository."
+    }
+  ]
+}
