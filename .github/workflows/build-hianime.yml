@@ -40,6 +40,20 @@ jobs:
           cache: gradle
           cache-dependency-path: aniyomi-build/**/gradle-wrapper.properties
 
+      - name: Refresh unavailable legacy Injekt dependency
+        working-directory: aniyomi-build
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("gradle/libs.versions.toml")
+          text = path.read_text()
+          old = 'injekt-core = { module = "com.github.inorichi.injekt:injekt-core", version = "65b0440" }'
+          new = 'injekt-core = { module = "com.github.null2264.injekt:injekt-core", version = "4135455a2a" }'
+          if old not in text:
+              raise SystemExit("Expected legacy Injekt dependency declaration was not found")
+          path.write_text(text.replace(old, new, 1))
+          PY
+
       - name: Copy HiAnime module into build environment
         run: |
           mkdir -p aniyomi-build/src/en/hianime
