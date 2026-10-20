@@ -25,12 +25,22 @@ class HiAnime : AnimeHttpSource() {
     override val name = "HiAnime"
     override val baseUrl = "https://hianime.to"
     override val lang = "en"
-    override val supportsLatest = false
+    override val supportsLatest = true
 
     override fun popularAnimeRequest(page: Int): Request =
         GET("$baseUrl/most-popular?page=$page", HEADERS)
 
     override fun popularAnimeParse(response: Response): AnimesPage {
+        val document = response.asJsoup()
+        val entries = document.select(".flw-item, .film_list-wrap .item").mapNotNull { it.toAnime() }
+        val hasNext = document.selectFirst("a[rel=next], .pagination .page-item.active + .page-item a") != null
+        return AnimesPage(entries, hasNext)
+    }
+
+    override fun latestUpdatesRequest(page: Int): Request =
+        GET("$baseUrl/recently-updated?page=$page", HEADERS)
+
+    override fun latestUpdatesParse(response: Response): AnimesPage {
         val document = response.asJsoup()
         val entries = document.select(".flw-item, .film_list-wrap .item").mapNotNull { it.toAnime() }
         val hasNext = document.selectFirst("a[rel=next], .pagination .page-item.active + .page-item a") != null
