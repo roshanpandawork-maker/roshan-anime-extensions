@@ -2,7 +2,7 @@
 
 ## Current state
 
-A first HiAnime Kotlin module has been added under src/en/hianime, along with a GitHub Actions workflow that attempts to compile it against the archived Aniyomi extension build environment. It is still a prototype: build status, live parsing, and playback have not been verified. The video-provider extractor is explicitly unfinished.
+A first HiAnime Kotlin module has been added under src/en/hianime. Its debug APK build passed in GitHub Actions run 39423240163 on 2026-10-20 after isolating the module and replacing an unavailable legacy Injekt dependency. It is still a prototype: live parsing and playback have not been verified, and the video-provider extractor is unfinished.
 
 ## Priority order
 
