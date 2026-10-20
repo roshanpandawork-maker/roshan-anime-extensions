@@ -49,7 +49,7 @@ jobs:
           text = path.read_text()
           start = text.index('    val chunkSize = System.getenv("CI_CHUNK_SIZE").toInt()')
           end = text.index('    }', start) + len('    }')
-          replacement = '    // Load only the extension under test; do not configure every source module.\\n    loadIndividualExtension("en", "hianime")'
+          replacement = '    // Load only the extension under test; do not configure every source module.\n    loadIndividualExtension("en", "hianime")'
           path.write_text(text[:start] + replacement + text[end:])
           PY
 
