@@ -1,43 +1,51 @@
 {
   "schemaVersion": 1,
   "project": "Roshan Anime Extensions",
-  "status": "research",
+  "status": "prototype",
   "sources": [
     {
       "id": "hianime",
       "name": "HiAnime",
-      "languages": ["en"],
+      "languages": [
+        "en"
+      ],
       "priority": "high",
-      "integration": "planned",
+      "integration": "prototype-module",
       "tested": false,
-      "notes": "Implement only after confirming the current site domain, search/detail/episode parsing, and stream extraction. Cloudflare or site changes may block automation."
+      "notes": "Initial Kotlin module added for listing/search/details/episodes. Not yet build-verified or tested in Aniyomi; playback extractor is not implemented."
     },
     {
       "id": "animedubhindi",
       "name": "AnimeDubHindi",
-      "languages": ["hi"],
+      "languages": [
+        "hi"
+      ],
       "priority": "high",
       "integration": "evaluate-upstream",
       "tested": false,
-      "notes": "A maintained community repository currently lists a Hindi source. Prefer reviewing its implementation and license before adapting code."
+      "notes": "A community repository lists a Hindi source. Review current code and license before adapting it; not implemented in this project."
     },
     {
       "id": "toonstream",
       "name": "Toonstream",
-      "languages": ["hi"],
+      "languages": [
+        "hi"
+      ],
       "priority": "high",
       "integration": "evaluate-upstream",
       "tested": false,
-      "notes": "A maintained community repository currently lists a Hindi source. Availability can change; this project has not tested it."
+      "notes": "A community repository lists a Hindi source. Availability changes; this project has not tested or implemented it."
     },
     {
       "id": "yuzono-catalogue",
       "name": "Yūzōnō Anime Extensions",
-      "languages": ["multi"],
+      "languages": [
+        "multi"
+      ],
       "priority": "reference",
       "integration": "external-repository",
       "tested": false,
-      "notes": "Use as a reference catalogue; do not copy APKs into this project or imply that they are built by this repository."
+      "notes": "Independent reference catalogue; APKs are not built or maintained by this project."
     }
   ]
 }
