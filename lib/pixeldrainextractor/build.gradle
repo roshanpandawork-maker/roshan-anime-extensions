@@ -1,0 +1,22 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion AndroidConfig.compileSdk
+    namespace 'aniyomi.lib.pixeldrainextractor'
+
+    defaultConfig {
+        minSdkVersion AndroidConfig.minSdk
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.github.aniyomiorg:extensions-lib:14'
+}
