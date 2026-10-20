@@ -28,7 +28,7 @@ class HiAnime : AnimeHttpSource() {
     override val supportsLatest = false
 
     override fun popularAnimeRequest(page: Int): Request =
-        GET("$baseUrl/most-popular?page=$page", headers)
+        GET("$baseUrl/most-popular?page=$page", HEADERS)
 
     override fun popularAnimeParse(response: Response): AnimesPage {
         val document = response.asJsoup()
@@ -39,7 +39,7 @@ class HiAnime : AnimeHttpSource() {
 
     override fun searchAnimeRequest(page: Int, query: String, filters: List<AnimeFilter>): Request {
         val encoded = URLEncoder.encode(query, "UTF-8")
-        return GET("$baseUrl/search?keyword=$encoded&page=$page", headers)
+        return GET("$baseUrl/search?keyword=$encoded&page=$page", HEADERS)
     }
 
     override fun searchAnimeParse(response: Response): AnimesPage {
@@ -52,7 +52,7 @@ class HiAnime : AnimeHttpSource() {
     override fun getFilterList() = AnimeFilterList()
 
     override fun animeDetailsRequest(anime: SAnime): Request =
-        GET(if (anime.url.startsWith("http")) anime.url else baseUrl + anime.url, headers)
+        GET(if (anime.url.startsWith("http")) anime.url else baseUrl + anime.url, HEADERS)
 
     override fun animeDetailsParse(response: Response): SAnime {
         val document = response.asJsoup()
@@ -84,7 +84,7 @@ class HiAnime : AnimeHttpSource() {
         }
 
         val ajaxUrl = "$baseUrl/ajax/v2/episode/list/$animeId"
-        val payload = client.newCall(GET(ajaxUrl, headers)).execute().use { it.body.string() }
+        val payload = client.newCall(GET(ajaxUrl, HEADERS)).execute().use { it.body.string() }
         val html = runCatching { org.json.JSONObject(payload).optString("html") }.getOrDefault("")
         if (html.isBlank()) return emptyList()
 
@@ -98,7 +98,7 @@ class HiAnime : AnimeHttpSource() {
     }
 
     override fun videoListRequest(episode: SEpisode): Request =
-        GET(if (episode.url.startsWith("http")) episode.url else baseUrl + episode.url, headers)
+        GET(if (episode.url.startsWith("http")) episode.url else baseUrl + episode.url, HEADERS)
 
     override fun videoListParse(response: Response): List<Video> {
         // An iframe URL is not itself a playable media URL. Do not return it as a video.
@@ -131,7 +131,7 @@ class HiAnime : AnimeHttpSource() {
 
     companion object {
         private val EPISODE_NUMBER = Regex("""(?:Episode\s*)?(\d+(?:\.\d+)?)""", RegexOption.IGNORE_CASE)
-        private val headers = okhttp3.Headers.Builder()
+        private val HEADERS = okhttp3.Headers.Builder()
             .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36")
             .add("Referer", "https://hianime.to/")
             .build()
