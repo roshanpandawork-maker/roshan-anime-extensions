@@ -1,0 +1,46 @@
+name: Validate source catalogue
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sources.json"
+      - "docs/**"
+      - ".github/workflows/validate-catalogue.yml"
+  pull_request:
+    paths:
+      - "sources.json"
+      - "docs/**"
+      - ".github/workflows/validate-catalogue.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON syntax and required fields
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("sources.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          assert data.get("schemaVersion") == 1, "schemaVersion must be 1"
+          assert isinstance(data.get("sources"), list) and data["sources"], "sources must be a non-empty list"
+          seen = set()
+          for source in data["sources"]:
+              for key in ("id", "name", "languages", "priority", "integration", "tested", "notes"):
+                  assert key in source, f"{source.get('id', '<unknown>')}: missing {key}"
+              assert source["id"] not in seen, f"duplicate source id: {source['id']}"
+              seen.add(source["id"])
+              assert isinstance(source["tested"], bool), f"{source['id']}: tested must be boolean"
+              assert isinstance(source["languages"], list), f"{source['id']}: languages must be a list"
+          print(f"Validated {len(data['sources'])} source entries.")
+          PY
