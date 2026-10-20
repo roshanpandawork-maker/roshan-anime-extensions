@@ -2,15 +2,15 @@
 
 A standalone Aniyomi-compatible anime extension project prioritising Hindi-dubbed and English-subbed/dubbed anime.
 
-> **Status: prototype, not production-ready.** A first HiAnime module and a GitHub Actions build workflow have been added. The module has not yet been built or tested in a live Aniyomi installation, and playback extraction is not implemented. This repository does not yet publish a usable repository index or verified release APK. The original HiAnime service's status is disputed; treat `hianime.to` and lookalike domains as unverified until independently confirmed.
+> **Status: prototype, not production-ready.** A first HiAnime module and a GitHub Actions build workflow have been added. The HiAnime module now builds as a debug APK in GitHub Actions (run 39423240163), but it has not been tested in a live Aniyomi installation and playback extraction is not implemented. This repository does not yet publish a usable repository index or production-ready release. The original HiAnime service's status is disputed; treat `hianime.to` and lookalike domains as unverified until independently confirmed.
 
 ## Current implementation
 
-- **HiAnime (English):** initial Kotlin module for popular listings, search, details, and episode-list parsing.
+- **HiAnime (English):** build-verified prototype for popular listings, latest updates, search, details, and episode-list parsing. Live-site parsing is unverified.
 - **Playback:** not implemented. HiAnime pages commonly use third-party protected embeds; the module deliberately reports this limitation rather than passing an iframe URL off as a playable video.
 - **Hindi sources:** under evaluation. They are not claimed as implemented or tested here.
 
-The Build HiAnime extension workflow attempts to build the module against the archived Aniyomi extension build environment and uploads a debug APK artifact if compilation succeeds. A successful build alone does not prove the site parser or playback works.
+The Build HiAnime extension workflow builds the module against the archived Aniyomi extension build environment, patches the unavailable legacy Injekt dependency to a maintained fork, and uploads a debug APK artifact. The build passed on 2026-10-20. A successful build alone does not prove the site parser or playback works.
 
 ## Sources you can use separately now
 
